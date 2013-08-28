@@ -57,7 +57,7 @@ void skategps::parseNmea() {
   if(lineReader!=lineBuffer) {
 
   
-	
+ //Serial.println( buffer[lineReader]);
 
     int fieldCount = SplitStringData(buffer[lineReader]);
     if(strstr(data[0],"$GPGGA")!=NULL) {
@@ -143,11 +143,14 @@ void skategps::parseNmea() {
       //MagVariation direction
       strncpy (&magneticVariationDirection,data[9],1);
       //Mode
-      strncpy (&mode,data[10],1);  
+     // strncpy (&mode,data[10],1);  
     } 
-    else if(strstr(data[0],"$GNGSA")!=NULL) {
+    else if((strstr(data[0],"$GNGSA")!=NULL)||(strstr(data[0],"$GPGSA")!=NULL)   ) {
       //mode
-      strncpy (&mode,data[2],1);
+     // strncpy (&mode,data[2],1);
+	 
+	  mode = atoi(data[2]);
+	  
       //pdop
       pdop = atof(data[15]); 
       //hdop
@@ -212,6 +215,7 @@ void skategps::gpsData(char byte_) {
 		cr = true;
 	  }
 	  if(nl&cr) {
+	  dataAge=millis();
 	    
 		buffer[lineBuffer][linePos+1] = '\0';
 		linePos = 0;
@@ -227,6 +231,16 @@ void skategps::gpsData(char byte_) {
 	  }
 
 
+}
+
+
+//checks if data is not older than 2 seconds... if so then the data is invalid... GPS serial stream not being recieved by Arduino
+boolean skategps::isDataValid() {
+	if((millis()-dataAge)<2000) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 

@@ -40,7 +40,7 @@ class skategps
 		char headingReference;
 		double magneticVariation;
 		char magneticVariationDirection;
-		char mode;
+		int mode;
 		double pdop;
 		double vdop;
 		double speedInKmh;
@@ -55,7 +55,7 @@ class skategps
 		skategps(int serialSelect);
 		void parseNmea();
 		void gpsData(char byte_);
-	
+	    boolean isDataValid() ;
 	
 	void init();
 	
@@ -70,6 +70,8 @@ class skategps
 		int lineReader;
 		boolean cr;
 		boolean nl;
+		
+		long dataAge;
 	
 		void calcLatLon();
 	
